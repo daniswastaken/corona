@@ -64,10 +64,5 @@ flowchart TD
 
     %% Safety
     MESH -->|Earth rod| EARTH[("Earth Ground")]
-
-    style HVMOD fill:#ffcccc,stroke:#ff0000
-    style EMIT fill:#ffcccc,stroke:#ff0000
-    style INTERLOCK fill:#fff3cd,stroke:#ff9800
-    style ESP32 fill:#cdeaff,stroke:#0066cc
 ```
 
