@@ -6,8 +6,14 @@
 //
 // Flags:
 //   --paper=A4|A3        sheet size for the diagram pages (default A4)
+//   --orientation=portrait|landscape
+//                        page orientation; portrait suits tall top-down graphs
+//                        (default landscape)
 //   --no-title           omit the document h1, print the graph alone
 //   --svg                also write out.svg beside the pdf
+//   --only-diagram        PDF is the graph alone on one sheet, no prose pages
+//   --align "A,B;C,D"      force those subgraph ids onto one left edge and one width
+//   --verbose             also print each subgraph's placed position
 //   --strict             exit non-zero if any label overlaps a subgraph title
 //   --rank-spacing=N     dagre rank gap (default 50; >=40 avoids title overlaps)
 //   --spacing=N          dagre node gap (default 30)
@@ -54,6 +60,91 @@ const inline = (s) =>
 
 // Minimal Markdown subset: ATX headings, fenced code, pipe tables,
 // ordered/unordered lists, paragraphs. Enough for engineering notes.
+// Which nodes each mermaid subgraph owns. The rendered SVG keeps nodes in a
+// sibling layer with no membership marker, so the only reliable source is the
+// definition itself. Returns { SUBCOMGRAPH_ID: ["NODE_ID", ...] }.
+// The edges of a mermaid block, as { id, src, dst, label, kind }. Written with
+// string operations and no backslashes: the id has to match what mermaid emits
+// ("L_SRC_DST_n") so the emitted paths can be found and re-routed.
+function blockEdges(block) {
+  // Longest first: "<-->" contains "-->", so checking it later would match the
+  // tail of it and split the line in the wrong place. "---" is a plain link with
+  // no arrowhead, and must be matched before "-->" for the same reason.
+  const ARROWS = ["<-.->", "<-->", "-.->", "-->", "---"];
+  const edges = [];
+  const seen = new Map();
+  const nameOf = (s) => s.split("[")[0].trim();
+
+  for (const raw of block.split(/\r?\n/)) {
+    let line = raw.trim();
+    if (!line || line.startsWith("%%") || line.startsWith("subgraph") || line === "end") continue;
+    if (line.startsWith("graph ") || line.startsWith("flowchart ")) continue;
+
+    let at = -1;
+    let arrow = null;
+    for (const a of ARROWS) {
+      const i = line.indexOf(a);
+      if (i >= 0 && (at < 0 || i < at || (i === at && a.length > arrow.length))) {
+        at = i;
+        arrow = a;
+      }
+    }
+    if (at < 0) continue;
+
+    const src = nameOf(line.slice(0, at));
+    let rest = line.slice(at + arrow.length);
+    let label = "";
+    rest = rest.trim();
+    if (rest.startsWith("|")) {
+      const close = rest.indexOf("|", 1);
+      label = rest.slice(1, close < 0 ? rest.length : close);
+      rest = rest.slice(close < 0 ? rest.length : close + 1);
+    }
+    const dst = nameOf(rest);
+    if (!src || !dst) continue;
+
+    const key = src + ">" + dst;
+    const n = seen.get(key) ?? 0;
+    seen.set(key, n + 1);
+    edges.push({
+      id: `L_${src}_${dst}_${n}`,
+      src,
+      dst,
+      label,
+      kind: arrow === "---" ? "link" : arrow.includes("-.->") ? "dotted" : "solid",
+      both: arrow.startsWith("<"),
+    });
+  }
+  return edges;
+}
+
+function clusterMembers(mermaidBlocks) {
+  const map = {};
+  for (const block of mermaidBlocks) {
+    const lines = block.split(/\r?\n/);
+    let current = null;
+    for (const line of lines) {
+      const sub = line.match(/^\s*subgraph\s+(\w+)/);
+      if (sub) {
+        current = sub[1];
+        map[current] = map[current] || [];
+        continue;
+      }
+      if (/^\s*end\s*$/.test(line)) {
+        current = null;
+        continue;
+      }
+      if (!current) continue;
+      // A bare node declaration: ID["label"] or ID[label], not an edge.
+      const node = line.match(/^\s*(\w+)\s*\[/);
+      if (node && !line.includes("-->") && !line.includes("-.->")) {
+        map[current].push(node[1]);
+      }
+    }
+  }
+  return map;
+}
+
 function markdownToHtml(md) {
   const lines = md.split(/\r?\n/);
   const out = [];
@@ -164,12 +255,19 @@ function markdownToHtml(md) {
 }
 
 function page(md, mermaidBlocks, opts) {
-  const { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, wantSvg } = opts;
-  const { html, diagramOnly } = markdownToHtml(md);
-  const pageSize = paper === "A3" ? "A3 landscape" : paper === "A4" ? "A4 landscape" : paper;
+  const { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, wantSvg, onlyDiagram, alignGroups, clusterMemberMap, edgeMap } = opts;
+  const { html, diagramOnly: contentIsDiagramOnly } = markdownToHtml(md);
+  const diagramOnly = opts.onlyDiagram || contentIsDiagramOnly;
+  const pageSize = sheetName;
   const title = (md.match(/^#\s+(.*)$/m) ?? [, "Document"])[1];
   // --no-title: print the graph alone, without the document's h1
-  const bodyHtml = noTitle ? html.replace(/^\s*<h1>[\s\S]*?<\/h1>\s*/, "") : html;
+  let bodyHtml = opts.noTitle ? html.replace(/^\s*<h1>[\s\S]*?<\/h1>\s*/, "") : html;
+  // --only-diagram: drop every prose block so the PDF is the graph and nothing
+  // else, on a single sheet
+  if (opts.onlyDiagram) {
+    const sections = html.match(/<section class="diagram-page">[\s\S]*?<\/section>/g) ?? [];
+    bodyHtml = sections.join("\n");
+  }
 
   return `<!doctype html>
 <html lang="en">
@@ -246,13 +344,303 @@ ${bodyHtml}
   });
   const defs = ${JSON.stringify(mermaidBlocks)};
 
-  // Diagram sheets are ${paper} landscape, margins 14mm/12mm. Fit each SVG into
+  // Diagram sheets are ${sheetName}, margins ${margin}. Fit each SVG into
   // what is left after its own headings, rather than trusting a CSS max-height
   // that the print layout will not honour.
   const MM = 96 / 25.4;
   const SHEET_W = ${usableW} * MM;
   const SHEET_H = ${usableH} * MM;
   const SHARED_PAGE = ${diagramOnly};
+  // subgraph id -> node ids it owns, taken from the mermaid source
+  const CLUSTER_MEMBERS = ${JSON.stringify(clusterMemberMap)};
+  // per diagram, the edges mermaid emitted, so they can be re-routed after nodes move
+  const EDGES = ${JSON.stringify(edgeMap)};
+
+  // Mermaid/dagre derives subgraph boxes from edge geometry alone. There is no
+  // way to ask it for "these two blocks the same width" or "line these two up",
+  // and hand-tuning edges to fake it only moves the misalignment somewhere
+  // else. But its output is regular: one <g class="cluster"> per subgraph with
+  // a background <rect> and a title, while nodes and edges live in sibling
+  // layers. So square the frames up directly instead of moving the graph -
+  // each group of subgraphs is forced onto one shared left edge and one shared
+  // width, growing symmetrically around the content dagre already centred.
+  // Nodes and edges are untouched, so connectivity survives.
+  function alignClusters(svg, groups) {
+    const GAP = 26;
+    let placedRight = null;
+    // mermaid prefixes cluster ids with the render id ("m0-ENERGI"), so match on
+    // the trailing name rather than the literal id.
+    const clusters = [...svg.querySelectorAll("g.cluster")];
+    const find = (name) =>
+      clusters.find((g) => {
+        const id = g.getAttribute("id") || "";
+        return id === name || id.endsWith("-" + name);
+      });
+
+    for (const ids of groups) {
+      const boxes = [];
+      for (const id of ids) {
+        const g = find(id);
+        const r = g && g.querySelector("rect");
+        if (!r) continue;
+        boxes.push({
+          g, r, name: id,
+          x: +r.getAttribute("x"),
+          y: +r.getAttribute("y"),
+          w: +r.getAttribute("width"),
+          h: +r.getAttribute("height"),
+        });
+      }
+      if (boxes.length < 2) continue;
+
+      // Even out the node boxes themselves, not just the frames around them.
+      // A node rect can be widened symmetrically about its own centre, which
+      // leaves every edge attached exactly where it was - edges terminate at node
+      // centres, so nothing detaches. This is what makes the blocks read as
+      // evenly filled rather than as a frame with lopsided contents.
+      const pad = 14;
+      const target = Math.max(
+        ...boxes.flatMap((b) => membersOf(svg, b).map((n) => n.right - n.left)),
+      );
+      for (const b of boxes) {
+        for (const n of membersOf(svg, b)) {
+          const grow = (target - (n.right - n.left)) / 2;
+          if (grow <= 0.5) continue;
+          n.shape.setAttribute("x", String(round2(n.x - grow)));
+          n.shape.setAttribute("width", String(round2(target)));
+        }
+      }
+      // geometry just changed, so anything measuring nodes must re-read it
+      svg.__nodeRects = null;
+
+      // Centre every block's contents in the group's frame. Single-column blocks
+      // therefore line up with each other automatically (same width, same centre),
+      // while a one-node block under a three-node block sits in the middle rather
+      // than hanging off the left edge.
+      const edgeList = EDGES[svg.__diagramIndex || 0] || [];
+      const spansOf = (b) => {
+        const inner = membersOf(svg, b);
+        if (!inner.length) return { lo: b.x, hi: b.x + b.w, cx: b.x + b.w / 2 };
+        const lo = Math.min(...inner.map((n) => n.left));
+        const hi = Math.max(...inner.map((n) => n.right));
+        return { lo, hi, cx: (lo + hi) / 2 };
+      };
+      const spans = boxes.map(spansOf);
+      const frameCx = (Math.min(...spans.map((s) => s.lo)) + Math.max(...spans.map((s) => s.hi))) / 2;
+
+      for (const [bi, b] of boxes.entries()) {
+        const dx = frameCx - spans[bi].cx;
+        if (Math.abs(dx) > 0.5) moveNodes(svg, b, dx);
+      }
+
+      // Groups are placed left to right; a group that would land on top of an
+      // earlier one is nudged clear instead of being allowed to overlap.
+      const mine = boxes.map(spansOf);
+      let left = Math.min(...mine.map((s) => s.lo)) - pad;
+      let right = Math.max(...mine.map((s) => s.hi)) + pad;
+      if (placedRight !== null && left < placedRight + GAP) {
+        const shift = placedRight + GAP - left;
+        for (const b of boxes) moveNodes(svg, b, shift);
+        left += shift;
+        right += shift;
+      }
+      placedRight = right;
+      rewiteEdges(svg, edgeList);
+
+      for (const b of boxes) {
+        b.r.setAttribute("x", String(round2(left)));
+        b.r.setAttribute("width", String(round2(right - left)));
+        b.g.removeAttribute("transform");
+      }
+      for (const b of boxes) placeBlockLabel(b, left, right);
+    }
+  }
+
+  // Block titles sit at the top-left inside the frame, like a fieldset legend.
+  // Mermaid centres them and sizes the group from the text, so a long title on a
+  // narrow block spills past both edges. Re-anchor on the left, clamp the group
+  // to the frame width, and let the text ellipsize if it still cannot fit.
+  function placeBlockLabel(box, left, right) {
+    const label = box.g.querySelector("g.cluster-label");
+    if (!label) return;
+    const inner = label.firstElementChild;
+    const outer = inner && inner.querySelector("text");
+    const pad = 6;
+
+    label.setAttribute(
+      "transform",
+      "translate(" + round2(left + pad) + "," + round2(box.y) + ")",
+    );
+    if (outer) {
+      for (const t of outer.querySelectorAll("tspan")) t.setAttribute("text-anchor", "start");
+    }
+    // Measure after re-anchoring, then shrink to the frame if it overflows.
+    const w = label.getBBox ? label.getBBox().width : 0;
+    const avail = right - left - pad * 2;
+    if (w > avail && w > 0) {
+      const scale = avail / w;
+      inner.setAttribute("transform", "scale(" + round2(scale) + ",1)");
+      // A scaled transform shifts the origin, so correct for it.
+      label.setAttribute(
+        "transform",
+        "translate(" + round2(left + pad) + "," + round2(box.y) + ")",
+      );
+      inner.style.transformOrigin = "0 0";
+    } else if (inner.hasAttribute("transform")) {
+      inner.removeAttribute("transform");
+    }
+  }
+
+  // Slide one block's nodes sideways. Only the <g> translate changes, so a node
+  // keeps its internal geometry and its edges are re-routed afterwards.
+  function moveNodes(svg, box, dx) {
+    for (const name of CLUSTER_MEMBERS[box.name] || []) {
+      for (const g of svg.querySelectorAll("g.node")) {
+        const id = g.getAttribute("id") || "";
+        if (id.split("-flowchart-")[1]?.replace(/-[0-9]+$/, "") !== name) continue;
+        const tr = g.getAttribute("transform") || "";
+        const nums = tr.slice(tr.indexOf("(") + 1, tr.lastIndexOf(")")).split(",");
+        const ox = parseFloat(nums[0]) || 0;
+        const oy = parseFloat(nums[1]) || 0;
+        g.setAttribute("transform", "translate(" + round2(ox + dx) + "," + round2(oy) + ")");
+      }
+    }
+    svg.__nodeRects = null;
+  }
+
+  // Re-draw every edge between the nodes' current boxes. Anchors are chosen on
+  // the box border the edge leaves from and arrives at, and the curve is a plain
+  // cubic, which is what dagre emits for a top-down graph anyway.
+  function rewiteEdges(svg, edges) {
+    if (!edges || !edges.length) return;
+    const rects = nodeRects(svg);
+    for (const e of edges) {
+      const path = svg.querySelector('path[data-id="' + e.id + '"]');
+      const a = rects.get(e.src);
+      const b = rects.get(e.dst);
+      if (!path || !a || !b) continue;
+
+      // An undirected link ("---") is a relationship, not a command, so it joins
+      // the two boxes side by side. Routing it top-to-bottom instead would run
+      // the line straight through whichever node sits between them.
+      const side = !e.kind || e.kind === "link";
+
+      const sameColumn = Math.abs(a.cx - b.cx) < 2;
+      let mid;
+      if (side && !sameColumn) {
+        const rightward = b.cx > a.cx;
+        const x1 = rightward ? a.right : a.left;
+        const x2 = rightward ? b.left : b.right;
+        const y = round2((a.cy + b.cy) / 2);
+        const midX = round2((x1 + x2) / 2);
+        path.setAttribute(
+          "d",
+          "M" + round2(x1) + "," + round2(a.cy) +
+            "C" + midX + "," + round2(a.cy) + " " + midX + "," + round2(b.cy) +
+            " " + round2(x2) + "," + round2(b.cy),
+        );
+        mid = { x: midX, y };
+      } else if (sameColumn) {
+        const down = b.top > a.top;
+        const y1 = down ? a.bottom : a.top;
+        const y2 = down ? b.top : b.bottom;
+        const x = round2((a.cx + b.cx) / 2);
+        path.setAttribute("d", "M" + x + "," + round2(y1) + "L" + x + "," + round2(y2));
+        mid = { x, y: (y1 + y2) / 2 };
+      } else {
+        const down = b.cy > a.cy;
+        const y1 = down ? a.bottom : a.top;
+        const y2 = down ? b.top : b.bottom;
+        const x1 = round2(a.cx);
+        const x2 = round2(b.cx);
+        const midY = round2((y1 + y2) / 2);
+        path.setAttribute(
+          "d",
+          "M" + x1 + "," + round2(y1) + "C" + x1 + "," + midY + " " + x2 + "," + midY +
+            " " + x2 + "," + round2(y2),
+        );
+        // cubic midpoint at t=0.5 is (P0 + 3P1 + 3P2 + P3) / 8
+        mid = { x: (x1 + 3 * x1 + 3 * x2 + x2) / 8, y: (y1 + 3 * midY + 3 * midY + y2) / 8 };
+      }
+
+      const label = svg.querySelector('g.label[data-id="' + e.id + '"]');
+      if (label) {
+        // Mermaid positions a label on the wrapping g.edgeLabel and leaves the
+        // inner g.label at identity. Writing the offset to both stacks them, so
+        // the position goes on the wrapper and the inner one is reset.
+        const holder = label.closest("g.edgeLabel") || label;
+        holder.setAttribute("transform", "translate(" + round2(mid.x) + "," + round2(mid.y) + ")");
+        if (holder !== label) label.setAttribute("transform", "translate(0,0)");
+      }
+    }
+  }
+
+
+  // Node positions in viewBox units, keyed by the node's mermaid name.
+  function nodeRects(svg) {
+    const out = new Map();
+    for (const g of svg.querySelectorAll("g.node")) {
+      const shape = g.querySelector("rect,circle,ellipse,polygon");
+      if (!shape) continue;
+      // Nodes sit in a sibling layer positioned by a translate on the wrapping
+      // <g>, so the shape's own x/y are local to that group.
+      // Parsed with string ops rather than a regex on purpose. This whole block
+      // sits inside a JS template literal, where a single backslash is an escape
+      // sequence: /translate\(\s*.../ silently becomes /translate(s*(-d.]+).../
+      // and the node lookup below comes back empty. No backslashes, no surprises.
+      const tr = g.getAttribute("transform") || "";
+      const nums = tr.slice(tr.indexOf("(") + 1, tr.lastIndexOf(")")).split(",");
+      const ox = parseFloat(nums[0]) || 0;
+      const oy = parseFloat(nums[1]) || 0;
+      const b = shape.getBBox();
+      // Ids look like "m0-flowchart-SURYA-0": strip the prefix and the trailing
+      // index, leaving the name as written in the mermaid source.
+      const id = g.getAttribute("id") || "";
+      const name = (id.split("-flowchart-")[1] || "").replace(/-[0-9]+$/, "");
+      out.set(name, {
+        left: ox + b.x,
+        right: ox + b.x + b.width,
+        top: oy + b.y,
+        bottom: oy + b.y + b.height,
+        cx: ox + b.x + b.width / 2,
+        cy: oy + b.y + b.height / 2,
+        x: b.x,
+        shape,
+      });
+    }
+    return out;
+  }
+
+  function membersOf(svg, box) {
+    const rects = svg.__nodeRects || (svg.__nodeRects = nodeRects(svg));
+    const names = CLUSTER_MEMBERS[box.name] || [];
+    const out = [];
+    for (const n of names) {
+      const r = rects.get(n);
+      if (r) out.push(r);
+    }
+    return out;
+  }
+
+  const round2 = (n) => Math.round(n * 100) / 100;
+
+  // Moving the frames can push content outside the original viewBox, which
+  // would silently crop it. Re-derive the viewBox from what is actually drawn.
+  function reframe(svg, pad = 8) {
+    let box;
+    try {
+      box = svg.getBBox();
+    } catch {
+      return;
+    }
+    if (!box || !box.width || !box.height) return;
+    svg.setAttribute(
+      "viewBox",
+      [box.x - pad, box.y - pad, box.width + pad * 2, box.height + pad * 2]
+        .map(round2)
+        .join(" "),
+    );
+  }
 
   function fitToSheet(div) {
     const svg = div.querySelector("svg");
@@ -287,7 +675,57 @@ ${bodyHtml}
       nodes: svg.querySelectorAll(".node").length,
       textPx: +(FONT_PX * shrink).toFixed(2),
       collisions: countCollisions(svg),
+      clusters: clusterBoxes(svg),
+      nodesList: nodeBoxes(svg),
     };
+  }
+
+  // Every node's rendered size, in viewBox units. Used to check that sibling
+  // nodes inside one block come out the same size instead of eyeballing it.
+  function nodeBoxes(svg) {
+    const vb = svg.viewBox && svg.viewBox.baseVal;
+    const sx = vb && vb.width ? svg.getBoundingClientRect().width / vb.width : 1;
+    const originX = () => svg.getBoundingClientRect().left;
+    return [...svg.querySelectorAll("g.node")]
+      .map((g) => {
+        const shape = g.querySelector("rect,circle,ellipse,polygon,path");
+        const r = (shape || g).getBoundingClientRect();
+        const gr = g.getBoundingClientRect();
+        const label = [...(g.querySelectorAll("tspan") || [])]
+          .map((t) => (t.textContent || "").trim())
+          .filter(Boolean)
+          .join(" / ")
+          .slice(0, 34) || (g.id || "?").slice(0, 34);
+        return {
+          name: label,
+          x: Math.round((gr.left - originX()) / sx),
+          w: Math.round(r.width / sx), h: Math.round(r.height / sx),
+        };
+      })
+      .sort((a, b) => b.w - a.w);
+  }
+
+  // Where each subgraph actually landed, in viewBox units. dagre picks cluster
+  // placement from declaration order and edge geometry, so block layout is not
+  // something to eyeball - measure it.
+  function clusterBoxes(svg) {
+    const vb = svg.viewBox && svg.viewBox.baseVal;
+    const sx = vb && vb.width ? svg.getBoundingClientRect().width / vb.width : 1;
+    const originX = svg.getBoundingClientRect().left;
+    const originY = svg.getBoundingClientRect().top;
+    return [...svg.querySelectorAll("g.cluster")]
+      .map((c) => {
+        const label = c.querySelector(".cluster-label");
+        const r = c.getBoundingClientRect();
+        return {
+          name: (label?.textContent || "?").trim().replace(/[ ]+/g, " ").slice(0, 28),
+          x: Math.round((r.left - originX) / sx),
+          y: Math.round((r.top - originY) / sx),
+          w: Math.round(r.width / sx),
+          h: Math.round(r.height / sx),
+        };
+      })
+      .sort((a, b) => a.y - b.y || a.x - b.x);
   }
 
   // dagre does not reserve room for subgraph titles, so an edge label routed
@@ -399,7 +837,11 @@ ${bodyHtml}
       document.getElementById("d" + i).innerHTML = svg;
     }
     for (let i = 0; i < defs.length; i++) {
-      report.push(fitToSheet(document.getElementById("d" + i)));
+      const div = document.getElementById("d" + i);
+      const svg = div.querySelector("svg");
+      alignClusters(svg, ${JSON.stringify(alignGroups)});
+      if (${JSON.stringify(alignGroups)}.length) reframe(svg);
+      report.push(fitToSheet(div));
     }
     document.body.dataset.diagrams = JSON.stringify(report);
 
@@ -410,7 +852,18 @@ ${bodyHtml}
       const out = [];
       for (let i = 0; i < defs.length; i++) {
         const { svg } = await mermaid.render("s" + i, defs[i]);
-        out.push(inlineStyles(svg));
+        // same block alignment as the printed sheet, so the two agree
+        // Must be in the document: getBBox() returns zeroes on a detached SVG,
+        // which silently turns the block-sizing pass into a no-op.
+        const holder = document.createElement("div");
+        holder.style.cssText = "position:absolute;left:-99999px;top:0;width:10000px";
+        holder.innerHTML = svg;
+        document.body.appendChild(holder);
+        const el = holder.querySelector("svg");
+        alignClusters(el, ${JSON.stringify(alignGroups)});
+        if (${JSON.stringify(alignGroups)}.length) reframe(el);
+        out.push(inlineStyles(holder.innerHTML));
+        holder.remove();
       }
       document.body.dataset.svgs = JSON.stringify(out);
     }
@@ -474,7 +927,9 @@ function findBrowser() {
 async function writeHtmlAndCount(mdPath, htmlPath, opts) {
   const md = readFileSync(mdPath, "utf8");
   const { mermaidBlocks } = markdownToHtml(md);
-  await writeFile(htmlPath, page(md, mermaidBlocks, opts));
+  const clusterMemberMap = clusterMembers(mermaidBlocks);
+  const edgeMap = mermaidBlocks.map((b) => blockEdges(b));
+  await writeFile(htmlPath, page(md, mermaidBlocks, { ...opts, clusterMemberMap, edgeMap }));
   return { mermaidBlockCount: mermaidBlocks.length };
 }
 
@@ -501,11 +956,35 @@ const rankSpacing = Number(flag("rank-spacing", 50));
 const titleMargin = Number(flag("title-margin", 25));
 // --paper: bigger sheet = more readable text for dense diagrams
 const paper = flag("paper", "A4");
-const margin = paper === "A3" ? "16mm 14mm" : "14mm 12mm";
-const usableW = paper === "A3" ? 392 : 273;
-const usableH = paper === "A3" ? 265 : 182;
+// --orientation: portrait suits tall top-down graphs, landscape suits wide ones
+const orientation = flag("orientation", "landscape");
+if (orientation !== "portrait" && orientation !== "landscape") {
+  throw new Error(`--orientation must be portrait or landscape, got "${orientation}"`);
+}
+
+// Usable print area per sheet, in mm, after the page margins.
+const SHEETS = {
+  "A4 landscape": { w: 273, h: 182, margin: "14mm 12mm" },
+  "A4 portrait": { w: 186, h: 269, margin: "14mm 12mm" },
+  "A3 landscape": { w: 392, h: 265, margin: "16mm 14mm" },
+  "A3 portrait": { w: 269, h: 388, margin: "16mm 14mm" },
+};
+const sheetName = `${paper} ${orientation}`;
+const sheet = SHEETS[sheetName];
+if (!sheet) throw new Error(`--paper must be A4 or A3, got "${paper}"`);
+const { margin, usableW, usableH } = { margin: sheet.margin, usableW: sheet.w, usableH: sheet.h };
+// --align "A,B;C,D": force each comma-separated group of subgraph ids onto one
+//   shared left edge and one shared width. Ids are the mermaid subgraph names,
+//   e.g. --align "ENERGI,CORONA;MASUKAN,KENDALI". Mermaid has no option for
+//   this, so it is applied to the emitted frames after layout.
+const alignGroups = (flag("align", "") || "")
+  .split(";")
+  .map((g) => g.split(",").map((s) => s.trim()).filter(Boolean))
+  .filter((g) => g.length > 1);
 // --no-title: omit the document h1 from the printed sheet, graph only
 const noTitle = process.argv.includes("--no-title");
+// --only-diagram: PDF is the graph alone, one sheet, no prose pages
+const onlyDiagram = process.argv.includes("--only-diagram");
 // --svg: also write standalone .svg next to the .pdf
 const wantSvg = process.argv.includes("--svg");
 
@@ -516,7 +995,7 @@ const pdfPath = resolve(process.cwd(), pdfArg);
 const htmlPath = join(CACHE, mdArg.replace(/[\\/]/g, "_") + ".html");
 
 await ensureMermaid();
-const { mermaidBlockCount } = await writeHtmlAndCount(mdPath, htmlPath, { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, wantSvg });
+const { mermaidBlockCount } = await writeHtmlAndCount(mdPath, htmlPath, { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, wantSvg, onlyDiagram, alignGroups });
 
 // --- render via CDP ---------------------------------------------------------
 // `--print-to-pdf` snapshots on a virtual clock, which fires before mermaid's
@@ -614,12 +1093,21 @@ try {
     throw new Error(`expected ${mermaidBlockCount} diagrams, page reported ${diagrams.length}`);
   }
   let overlaps = 0;
+  let verbose = process.argv.includes("--verbose");
   for (const [i, d] of diagrams.entries()) {
     if (!d || !d.nodes) throw new Error(`diagram ${i + 1} rendered empty (${JSON.stringify(d)})`);
     const n = d.collisions?.length ?? 0;
     overlaps += n;
     const collide = n ? `, ${n} OVERLAP: ${d.collisions.join("; ")}` : "";
     console.log(`diagram ${i + 1}: ${d.w}x${d.h}px on sheet, ${d.nodes} nodes, ~${d.textPx}px text${collide}`);
+    if (verbose) {
+      for (const c of d.clusters ?? []) {
+        console.log(`    cluster ${String(c.x).padStart(5)},${String(c.y).padStart(5)}  ${c.w}x${c.h}  ${c.name}`);
+      }
+      for (const n of d.nodesList ?? []) {
+        console.log(`    node    x=${String(n.x).padStart(5)}  ${String(n.w).padStart(4)}x${String(n.h).padStart(3)}  ${n.name}`);
+      }
+    }
   }
   if (overlaps && process.argv.includes("--strict")) {
     throw new Error(`${overlaps} label/title overlaps (rerun with a larger --rank-spacing)`);
