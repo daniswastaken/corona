@@ -1,6 +1,6 @@
 ```mermaid
 flowchart TD
-    subgraph MASALAH["Masalah: kenapa air kabut gagal dipanen"]
+    subgraph MASALAH["Masalah"]
         EL["El Nino<br/>kekeringan melanda Indonesia"]
         AIR["Kekurangan air bersih<br/>hanya 2,5% air tawar di bumi,<br/>700 juta orang kekurangan akses"]
         SFC["Jaring SFC konvensional<br/>1 m2, efisiensi ekstraksi<br/>cuma 1-10%"]
@@ -9,7 +9,7 @@ flowchart TD
         JAUH["Daerah terpencil<br/>butuh listrik mandiri<br/>butuh pemantauan kondisi real time"]
     end
 
-    subgraph SOLUSI["Solusi: apa yang E-Fog lakukan"]
+    subgraph SOLUSI["Solusi"]
         EFC["Electrostatic Fog Collector (EFC)<br/>emitor ion + elektroda jaring"]
         CORONA["Pelepasan korona<br/>muatan masuk ke tetesan kabut"]
         COULOMB["Gaya Coulomb<br/>menarik tetesan bermuatan<br/>menuju jaring kolektor"]
@@ -44,5 +44,3 @@ flowchart TD
     ESP --> TURUN
     TURUN --> EFC
 ```
-
-*Gambar 1. Relasi masalah dan solusi E-Fog: tiap elemen solusi menjawab bagian masalah yang spesifik.*

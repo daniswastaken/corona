@@ -10,9 +10,11 @@
 //                        page orientation; portrait suits tall top-down graphs
 //                        (default landscape)
 //   --no-title           omit the document h1, print the graph alone
+//   --no-diagram-title   omit the auto "Diagram N" heading above each graph
 //   --svg                also write out.svg beside the pdf
 //   --only-diagram        PDF is the graph alone on one sheet, no prose pages
-//   --align "A,B;C,D"      force those subgraph ids onto one left edge and one width
+//   --align="A,B;C,D"     force those subgraph ids onto one left edge and one width
+//                         (space form "--align A,B" also works)
 //   --verbose             also print each subgraph's placed position
 //   --strict             exit non-zero if any label overlaps a subgraph title
 //   --rank-spacing=N     dagre rank gap (default 50; >=40 avoids title overlaps)
@@ -255,7 +257,7 @@ function markdownToHtml(md) {
 }
 
 function page(md, mermaidBlocks, opts) {
-  const { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, wantSvg, onlyDiagram, alignGroups, clusterMemberMap, edgeMap } = opts;
+  const { fontPx, spacing, rankSpacing, titleMargin, paper, usableW, usableH, margin, noTitle, noDiagramTitle, wantSvg, onlyDiagram, alignGroups, clusterMemberMap, edgeMap } = opts;
   const { html, diagramOnly: contentIsDiagramOnly } = markdownToHtml(md);
   const diagramOnly = opts.onlyDiagram || contentIsDiagramOnly;
   const pageSize = sheetName;
@@ -319,6 +321,7 @@ function page(md, mermaidBlocks, opts) {
   .diagram-only .diagram-title { display: none; }
   body.diagram-only h1 { margin-bottom: 6pt; }
   .diagram-title { border: 0; margin: 0 0 4pt; font-size: 11pt; color: #444; }
+  ${noDiagramTitle ? ".diagram-title { display: none; }" : ""}
 </style>
 </head>
 <body${diagramOnly ? ' class="diagram-only"' : ""}>
@@ -936,11 +939,33 @@ async function writeHtmlAndCount(mdPath, htmlPath, opts) {
 // Usage: node tools/md2pdf.mjs <in.md> [out.pdf] [--paper=A3] [--spacing=18] [--font-size=18]
 // Flags may appear anywhere; only non-flag arguments are positional.
 const argv = process.argv.slice(2);
+// Flags that take a value. Listed explicitly so the space form ("--align A,B")
+// can tell a value apart from a positional path: anything directly after one of
+// these is its value, not an input file. Without this the documented space form
+// silently lost its argument and the flag did nothing.
+const VALUE_FLAGS = new Set([
+  "paper", "orientation", "align", "rank-spacing", "spacing",
+  "font-size", "title-margin",
+]);
+// Accepts both "--name=value" and "--name value".
 const flag = (name, fallback) => {
-  const hit = argv.find((a) => a.startsWith(`--${name}=`));
-  return hit ? hit.slice(name.length + 3) : fallback;
+  const eq = argv.find((a) => a.startsWith(`--${name}=`));
+  if (eq) return eq.slice(name.length + 3);
+  const i = argv.indexOf(`--${name}`);
+  if (i !== -1 && VALUE_FLAGS.has(name)) {
+    const next = argv[i + 1];
+    if (next !== undefined && !next.startsWith("--")) return next;
+  }
+  return fallback;
 };
-const positional = argv.filter((a) => !a.startsWith("--"));
+const positional = argv.filter((a, i) => {
+  if (a.startsWith("--")) return false;
+  const prev = argv[i - 1];
+  if (prev && prev.startsWith("--") && !prev.includes("=")) {
+    return !VALUE_FLAGS.has(prev.slice(2));
+  }
+  return true;
+});
 
 // --font-size: mermaid font px before the sheet downscale
 const fontPx = Number(flag("font-size", 18));
@@ -983,6 +1008,10 @@ const alignGroups = (flag("align", "") || "")
   .filter((g) => g.length > 1);
 // --no-title: omit the document h1 from the printed sheet, graph only
 const noTitle = process.argv.includes("--no-title");
+// --no-diagram-title: omit the auto "Diagram N" heading. Useful when the
+//   markdown already carries its own figure caption, so the placeholder is
+//   redundant noise on the sheet.
+const noDiagramTitle = process.argv.includes("--no-diagram-title");
 // --only-diagram: PDF is the graph alone, one sheet, no prose pages
 const onlyDiagram = process.argv.includes("--only-diagram");
 // --svg: also write standalone .svg next to the .pdf
