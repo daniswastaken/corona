@@ -15,17 +15,19 @@
 char ssid[] = "OPUS";
 char pass[] = "567890123";
 
-#define LED_PIN 2 // Onboard LED on ESP32 DevKit V1
+#define RELAY_PIN 26 // Relay control pin (active-LOW: LOW = closed/ON)
+#define LED_PIN 2   // Onboard LED mirrors relay state
 
-// Control onboard LED from Blynk app, Virtual Pin V0.
+// Control relay from Blynk app, Virtual Pin V0.
 // Add a Switch/Button widget on V0 in the Blynk dashboard.
-// LED state is mirrored to V1 for feedback.
+// Relay state is mirrored to V1 and the onboard LED for feedback.
 BLYNK_WRITE(V0) {
-  int state = param.asInt() ? HIGH : LOW;
-  digitalWrite(LED_PIN, state);
-  Blynk.virtualWrite(V1, state);
-  Serial.print("LED ");
-  Serial.println(state ? "ON" : "OFF");
+  int on = param.asInt() ? 1 : 0;
+  digitalWrite(RELAY_PIN, on ? LOW : HIGH); // Inverted: active-LOW module
+  digitalWrite(LED_PIN, on ? HIGH : LOW);
+  Blynk.virtualWrite(V1, on);
+  Serial.print("RELAY ");
+  Serial.println(on ? "CLOSED" : "OPEN");
 }
 
 BLYNK_CONNECTED() {
@@ -34,6 +36,8 @@ BLYNK_CONNECTED() {
 
 void setup() {
   Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, HIGH); // Start with relay open (active-LOW)
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
