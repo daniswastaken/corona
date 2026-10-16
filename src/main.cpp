@@ -15,7 +15,7 @@
 char ssid[] = "OPUS";
 char pass[] = "567890123";
 
-#define RELAY_PIN 26 // Relay control pin (active-LOW: LOW = closed/ON)
+#define RELAY_PIN 26 // Relay control pin (active-HIGH: HIGH = closed/ON)
 #define LED_PIN 2   // Onboard LED mirrors relay state
 
 // Control relay from Blynk app, Virtual Pin V0.
@@ -23,7 +23,7 @@ char pass[] = "567890123";
 // Relay state is mirrored to V1 and the onboard LED for feedback.
 BLYNK_WRITE(V0) {
   int on = param.asInt() ? 1 : 0;
-  digitalWrite(RELAY_PIN, on ? LOW : HIGH); // Inverted: active-LOW module
+  digitalWrite(RELAY_PIN, on ? HIGH : LOW); // Active-HIGH module
   digitalWrite(LED_PIN, on ? HIGH : LOW);
   Blynk.virtualWrite(V1, on);
   Serial.print("RELAY ");
@@ -37,7 +37,7 @@ BLYNK_CONNECTED() {
 void setup() {
   Serial.begin(115200);
   pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, HIGH); // Start with relay open (active-LOW)
+  digitalWrite(RELAY_PIN, LOW); // Start with relay open (active-HIGH)
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
