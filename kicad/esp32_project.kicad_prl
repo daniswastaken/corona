@@ -63,7 +63,7 @@
     "ssh_key": ""
   },
   "meta": {
-    "filename": "esp32_relay.kicad_prl",
+    "filename": "esp32_project.kicad_prl",
     "version": 5
   },
   "net_inspector_panel": {

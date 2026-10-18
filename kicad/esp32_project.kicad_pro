@@ -257,7 +257,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "esp32_relay.kicad_pro",
+    "filename": "esp32_project.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -425,18 +425,18 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "esp32_relay.kicad_sch",
-        "name": "esp32_relay",
+        "filename": "esp32_project.kicad_sch",
+        "name": "esp32_project",
         "uuid": "2b47d57e-636d-45f4-9f7c-1c23f2592c0c"
       }
     ],
-    "used_designators": "",
+    "used_designators": "#PWR1-6",
     "variants": []
   },
   "sheets": [
     [
       "2b47d57e-636d-45f4-9f7c-1c23f2592c0c",
-      "esp32_relay"
+      "esp32_project"
     ]
   ],
   "text_variables": {},
