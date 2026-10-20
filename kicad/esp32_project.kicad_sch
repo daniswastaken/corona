@@ -4,6 +4,11 @@
 	(generator_version "10.0")
 	(uuid "ed59da8b-31de-4a9f-bceb-f54177945b1e")
 	(paper "A4")
+	(title_block
+		(title "Skema IoT - Kontrol Via Blynk")
+		(company "Tim \"Kata Ketua Buat Nama Tim Harus Diskusi Dulu\"")
+		(comment 2 "Skema IoT")
+	)
 	(lib_symbols
 		(symbol "Project_Parts:Anemometer"
 			(exclude_from_sim no)
@@ -22,7 +27,7 @@
 				)
 			)
 			(property "Value" "Anemometer"
-				(at 0.254 8.636 0)
+				(at 2.54 7.874 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -78,7 +83,7 @@
 			(symbol "Anemometer_0_1"
 				(rectangle
 					(start -2.54 6.35)
-					(end 7.62 -6.35)
+					(end 7.62 -8.89)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -781,6 +786,288 @@
 						)
 					)
 					(number "30"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Project_Parts:KY008_Laser"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "LAS1"
+				(at 7.366 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "KY-008"
+				(at 5.334 7.112 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Connector:PinHeader_1x03_P2.54mm_Vertical"
+				(at 0 12.954 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "KY-008 650nm laser transmitter module (5V, S/GND/VCC 3-pin header, 18.5x15mm PCB)"
+				(at 0 18.034 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "laser KY-008 650nm module"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "KY008_Laser_0_1"
+				(rectangle
+					(start 0 5.08)
+					(end 10.16 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "KY008_Laser_1_1"
+				(pin input line
+					(at -2.54 2.54 0)
+					(length 2.54)
+					(name "S"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 0 0)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 -2.54 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Project_Parts:LDR_Module"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "LDR1"
+				(at 7.62 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LDR_Module"
+				(at 5.08 7.366 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Connector:PinHeader_1x03_P2.54mm_Vertical"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "LDR / photoresistor light sensor module (3-pin VCC/GND/OUT voltage divider, GL5516 style)"
+				(at 0 10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "LDR photoresistor light sensor module"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "LDR_Module_0_1"
+				(rectangle
+					(start 0 5.08)
+					(end 10.16 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LDR_Module_1_1"
+				(pin power_in line
+					(at -2.54 2.54 0)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 0 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -2.54 -2.54 0)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1780,9 +2067,20 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "lewat pembacaan sensor LDR"
+		(exclude_from_sim no)
+		(at 174.244 140.462 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "24ad999c-e2c2-4009-ac57-f1a628b23fc6")
+	)
 	(text "ZVS"
 		(exclude_from_sim no)
-		(at 91.948 146.558 0)
+		(at 90.678 136.398 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -1792,39 +2090,79 @@
 		)
 		(uuid "501436be-528e-43f7-969b-68743d3eb14f")
 	)
+	(text "dari cahaya laser"
+		(exclude_from_sim no)
+		(at 174.244 142.748 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c07a26df-543b-487c-8151-a7428ef8b71b")
+	)
+	(text "Deteksi keberadaan kabut"
+		(exclude_from_sim no)
+		(at 173.99 138.176 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c6c1f23a-90de-4412-8cd5-cda06f22fcc4")
+	)
 	(junction
-		(at 166.37 80.01)
+		(at 165.1 69.85)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "0aef3df7-bbf0-40c4-b12f-254c15438d35")
 	)
 	(junction
-		(at 170.18 127)
+		(at 165.1 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "113c8752-16c1-4de5-b000-c3d96ef42a88")
+	)
+	(junction
+		(at 168.91 116.84)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "11ecbbc2-ec4b-4844-878b-b98d3775d34b")
 	)
 	(junction
-		(at 121.92 127)
+		(at 120.65 116.84)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2f2cbfad-c5ad-4f80-b256-297406062d04")
 	)
 	(junction
-		(at 125.73 123.19)
+		(at 124.46 113.03)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4b5e5224-3653-49f0-99ea-4f52ea90c74c")
 	)
 	(junction
-		(at 121.92 120.65)
+		(at 120.65 110.49)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6b2aecf9-edbc-442d-9ac0-334dc2e6e0bf")
 	)
+	(junction
+		(at 165.1 119.38)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b9f640cb-e299-46a1-8671-0e8a84b026dd")
+	)
+	(junction
+		(at 205.74 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ccc9f183-9fc1-43fa-a0a3-5d5289b74cf8")
+	)
 	(wire
 		(pts
-			(xy 196.85 74.93) (xy 157.48 74.93)
+			(xy 195.58 64.77) (xy 156.21 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1834,7 +2172,7 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 123.19) (xy 125.73 123.19)
+			(xy 123.19 113.03) (xy 124.46 113.03)
 		)
 		(stroke
 			(width 0)
@@ -1844,7 +2182,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 120.65) (xy 121.92 107.95)
+			(xy 120.65 110.49) (xy 120.65 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1854,7 +2192,7 @@
 	)
 	(wire
 		(pts
-			(xy 153.67 87.63) (xy 170.18 87.63)
+			(xy 152.4 77.47) (xy 168.91 77.47)
 		)
 		(stroke
 			(width 0)
@@ -1864,7 +2202,7 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 120.65) (xy 121.92 120.65)
+			(xy 127 110.49) (xy 120.65 110.49)
 		)
 		(stroke
 			(width 0)
@@ -1874,7 +2212,7 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 76.2) (xy 88.9 137.16)
+			(xy 87.63 66.04) (xy 87.63 127)
 		)
 		(stroke
 			(width 0)
@@ -1884,7 +2222,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 102.87) (xy 95.25 102.87)
+			(xy 99.06 92.71) (xy 93.98 92.71)
 		)
 		(stroke
 			(width 0)
@@ -1894,7 +2232,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 113.03) (xy 172.72 113.03)
+			(xy 168.91 102.87) (xy 171.45 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1904,7 +2242,17 @@
 	)
 	(wire
 		(pts
-			(xy 182.88 80.01) (xy 182.88 83.82)
+			(xy 205.74 116.84) (xy 205.74 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "13381bd1-7b4e-416d-aad7-9c66b0158db3")
+	)
+	(wire
+		(pts
+			(xy 181.61 69.85) (xy 181.61 73.66)
 		)
 		(stroke
 			(width 0)
@@ -1914,7 +2262,7 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 102.87) (xy 127 102.87)
+			(xy 114.3 92.71) (xy 125.73 92.71)
 		)
 		(stroke
 			(width 0)
@@ -1924,7 +2272,17 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 88.9) (xy 194.31 77.47)
+			(xy 205.74 129.54) (xy 203.2 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c8f08d1-b1ee-4b3e-a117-dd7b78f324ff")
+	)
+	(wire
+		(pts
+			(xy 193.04 78.74) (xy 193.04 67.31)
 		)
 		(stroke
 			(width 0)
@@ -1934,7 +2292,17 @@
 	)
 	(wire
 		(pts
-			(xy 166.37 118.11) (xy 172.72 118.11)
+			(xy 152.4 92.71) (xy 158.75 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "26fb5e2a-83b3-4253-9ec1-9316459029a6")
+	)
+	(wire
+		(pts
+			(xy 165.1 107.95) (xy 171.45 107.95)
 		)
 		(stroke
 			(width 0)
@@ -1944,7 +2312,17 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 92.71) (xy 123.19 72.39)
+			(xy 165.1 107.95) (xy 165.1 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ea8faae-d9d1-4f53-b989-8765780295da")
+	)
+	(wire
+		(pts
+			(xy 121.92 82.55) (xy 121.92 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1954,7 +2332,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 88.9) (xy 194.31 88.9)
+			(xy 191.77 78.74) (xy 193.04 78.74)
 		)
 		(stroke
 			(width 0)
@@ -1964,7 +2342,7 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 105.41) (xy 124.46 123.19)
+			(xy 123.19 95.25) (xy 123.19 113.03)
 		)
 		(stroke
 			(width 0)
@@ -1974,7 +2352,17 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 87.63) (xy 127 87.63)
+			(xy 165.1 129.54) (xy 171.45 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3fa93cf9-5f69-4cdb-8756-cf09beee2bf5")
+	)
+	(wire
+		(pts
+			(xy 127 77.47) (xy 125.73 77.47)
 		)
 		(stroke
 			(width 0)
@@ -1984,7 +2372,17 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 74.93) (xy 157.48 90.17)
+			(xy 203.2 132.08) (xy 208.28 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "48a82486-80f9-4c94-bc1c-3a206b6c7d2d")
+	)
+	(wire
+		(pts
+			(xy 156.21 64.77) (xy 156.21 80.01)
 		)
 		(stroke
 			(width 0)
@@ -1994,7 +2392,7 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 123.19) (xy 125.73 138.43)
+			(xy 124.46 113.03) (xy 124.46 128.27)
 		)
 		(stroke
 			(width 0)
@@ -2004,7 +2402,17 @@
 	)
 	(wire
 		(pts
-			(xy 127 80.01) (xy 166.37 80.01)
+			(xy 119.38 59.69) (xy 208.28 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "58fd8123-3e24-4ede-a26c-c14e3dcaeeac")
+	)
+	(wire
+		(pts
+			(xy 125.73 69.85) (xy 165.1 69.85)
 		)
 		(stroke
 			(width 0)
@@ -2014,7 +2422,17 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 127) (xy 170.18 127)
+			(xy 165.1 119.38) (xy 203.2 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5d7a6c17-9436-4f58-a9db-150139024ebb")
+	)
+	(wire
+		(pts
+			(xy 120.65 116.84) (xy 168.91 116.84)
 		)
 		(stroke
 			(width 0)
@@ -2024,7 +2442,7 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 127) (xy 203.2 99.06)
+			(xy 205.74 116.84) (xy 205.74 88.9)
 		)
 		(stroke
 			(width 0)
@@ -2034,7 +2452,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 127) (xy 203.2 127)
+			(xy 168.91 116.84) (xy 205.74 116.84)
 		)
 		(stroke
 			(width 0)
@@ -2044,7 +2462,17 @@
 	)
 	(wire
 		(pts
-			(xy 166.37 80.01) (xy 166.37 118.11)
+			(xy 208.28 59.69) (xy 208.28 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73ea71c3-414d-4f96-b6b1-478be089c045")
+	)
+	(wire
+		(pts
+			(xy 165.1 69.85) (xy 165.1 107.95)
 		)
 		(stroke
 			(width 0)
@@ -2054,7 +2482,7 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 123.19) (xy 128.27 123.19)
+			(xy 124.46 113.03) (xy 127 113.03)
 		)
 		(stroke
 			(width 0)
@@ -2064,7 +2492,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 110.49) (xy 172.72 110.49)
+			(xy 168.91 100.33) (xy 171.45 100.33)
 		)
 		(stroke
 			(width 0)
@@ -2074,7 +2502,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 127) (xy 170.18 113.03)
+			(xy 168.91 116.84) (xy 168.91 102.87)
 		)
 		(stroke
 			(width 0)
@@ -2084,7 +2512,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 120.65) (xy 121.92 127)
+			(xy 120.65 110.49) (xy 120.65 116.84)
 		)
 		(stroke
 			(width 0)
@@ -2094,7 +2522,7 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 77.47) (xy 154.94 77.47)
+			(xy 193.04 67.31) (xy 153.67 67.31)
 		)
 		(stroke
 			(width 0)
@@ -2104,7 +2532,7 @@
 	)
 	(wire
 		(pts
-			(xy 95.25 107.95) (xy 95.25 137.16)
+			(xy 93.98 97.79) (xy 93.98 127)
 		)
 		(stroke
 			(width 0)
@@ -2114,7 +2542,7 @@
 	)
 	(wire
 		(pts
-			(xy 95.25 76.2) (xy 95.25 102.87)
+			(xy 93.98 66.04) (xy 93.98 92.71)
 		)
 		(stroke
 			(width 0)
@@ -2124,7 +2552,7 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 90.17) (xy 153.67 90.17)
+			(xy 156.21 80.01) (xy 152.4 80.01)
 		)
 		(stroke
 			(width 0)
@@ -2134,7 +2562,7 @@
 	)
 	(wire
 		(pts
-			(xy 154.94 77.47) (xy 154.94 97.79)
+			(xy 153.67 67.31) (xy 153.67 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2144,7 +2572,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 110.49) (xy 127 102.87)
+			(xy 125.73 100.33) (xy 125.73 92.71)
 		)
 		(stroke
 			(width 0)
@@ -2154,7 +2582,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 127) (xy 121.92 138.43)
+			(xy 120.65 116.84) (xy 120.65 128.27)
 		)
 		(stroke
 			(width 0)
@@ -2164,7 +2592,7 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 99.06) (xy 182.88 99.06)
+			(xy 205.74 88.9) (xy 181.61 88.9)
 		)
 		(stroke
 			(width 0)
@@ -2174,7 +2602,7 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 110.49) (xy 127 110.49)
+			(xy 127 100.33) (xy 125.73 100.33)
 		)
 		(stroke
 			(width 0)
@@ -2184,7 +2612,27 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 72.39) (xy 162.56 72.39)
+			(xy 127 87.63) (xy 119.38 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5a953ea-2307-4244-a841-d4f14683fb60")
+	)
+	(wire
+		(pts
+			(xy 168.91 132.08) (xy 171.45 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b810005c-8159-453c-8bbb-324b0fee0641")
+	)
+	(wire
+		(pts
+			(xy 121.92 62.23) (xy 161.29 62.23)
 		)
 		(stroke
 			(width 0)
@@ -2194,7 +2642,27 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 107.95) (xy 95.25 107.95)
+			(xy 158.75 92.71) (xy 158.75 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c120190a-b500-45ee-80e6-d0713b44e55d")
+	)
+	(wire
+		(pts
+			(xy 158.75 127) (xy 171.45 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6bbf14b-9675-46a7-8642-cd23aa14de8e")
+	)
+	(wire
+		(pts
+			(xy 99.06 97.79) (xy 93.98 97.79)
 		)
 		(stroke
 			(width 0)
@@ -2204,7 +2672,7 @@
 	)
 	(wire
 		(pts
-			(xy 166.37 80.01) (xy 182.88 80.01)
+			(xy 165.1 69.85) (xy 181.61 69.85)
 		)
 		(stroke
 			(width 0)
@@ -2214,7 +2682,37 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 107.95) (xy 121.92 107.95)
+			(xy 119.38 87.63) (xy 119.38 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d3a15749-5c1e-43bc-90df-d3d28dbe8544")
+	)
+	(wire
+		(pts
+			(xy 203.2 119.38) (xy 203.2 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6607fdc-5d4a-4953-9a9d-000542daf14f")
+	)
+	(wire
+		(pts
+			(xy 165.1 119.38) (xy 165.1 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9bdf352-8fe5-4daf-9c1b-8599c65c5ca6")
+	)
+	(wire
+		(pts
+			(xy 114.3 97.79) (xy 120.65 97.79)
 		)
 		(stroke
 			(width 0)
@@ -2224,7 +2722,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 87.63) (xy 170.18 110.49)
+			(xy 168.91 77.47) (xy 168.91 100.33)
 		)
 		(stroke
 			(width 0)
@@ -2234,7 +2732,7 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 92.71) (xy 123.19 92.71)
+			(xy 127 82.55) (xy 121.92 82.55)
 		)
 		(stroke
 			(width 0)
@@ -2244,7 +2742,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 115.57) (xy 172.72 115.57)
+			(xy 161.29 105.41) (xy 171.45 105.41)
 		)
 		(stroke
 			(width 0)
@@ -2254,7 +2752,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 91.44) (xy 196.85 91.44)
+			(xy 191.77 81.28) (xy 195.58 81.28)
 		)
 		(stroke
 			(width 0)
@@ -2264,7 +2762,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 72.39) (xy 162.56 115.57)
+			(xy 161.29 62.23) (xy 161.29 105.41)
 		)
 		(stroke
 			(width 0)
@@ -2274,7 +2772,7 @@
 	)
 	(wire
 		(pts
-			(xy 196.85 91.44) (xy 196.85 74.93)
+			(xy 195.58 81.28) (xy 195.58 64.77)
 		)
 		(stroke
 			(width 0)
@@ -2284,7 +2782,7 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 105.41) (xy 124.46 105.41)
+			(xy 114.3 95.25) (xy 123.19 95.25)
 		)
 		(stroke
 			(width 0)
@@ -2294,7 +2792,17 @@
 	)
 	(wire
 		(pts
-			(xy 127 87.63) (xy 127 80.01)
+			(xy 168.91 116.84) (xy 168.91 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f93b5c77-0a5c-4b5e-b7d2-003ebdf23299")
+	)
+	(wire
+		(pts
+			(xy 125.73 77.47) (xy 125.73 69.85)
 		)
 		(stroke
 			(width 0)
@@ -2304,7 +2812,7 @@
 	)
 	(wire
 		(pts
-			(xy 154.94 97.79) (xy 153.67 97.79)
+			(xy 153.67 87.63) (xy 152.4 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2314,7 +2822,7 @@
 	)
 	(symbol
 		(lib_id "Project_Parts:Relay_Module")
-		(at 107.95 105.41 0)
+		(at 106.68 95.25 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2324,7 +2832,7 @@
 		(dnp no)
 		(uuid "0327d958-632e-4272-9078-7843fd61f312")
 		(property "Reference" "Kasdasdasdadsadsad"
-			(at 110.49 105.41 0)
+			(at 109.22 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2335,7 +2843,7 @@
 			)
 		)
 		(property "Value" "Relay_Module"
-			(at 107.696 96.774 0)
+			(at 106.426 86.614 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2345,7 +2853,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 107.95 100.33 0)
+			(at 106.68 90.17 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2356,7 +2864,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 97.79 0)
+			(at 106.68 87.63 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2367,7 +2875,7 @@
 			)
 		)
 		(property "Description" "5V relay module (IN / VCC / GND control header + COM/NO/NC contacts)"
-			(at 107.95 95.25 0)
+			(at 106.68 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2406,7 +2914,7 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
-		(at 95.25 137.16 180)
+		(at 93.98 127 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2417,7 +2925,7 @@
 		(fields_autoplaced yes)
 		(uuid "0bf1bed2-31da-4607-80eb-c9a6ba394fa2")
 		(property "Reference" "#PWR04"
-			(at 95.25 133.35 0)
+			(at 93.98 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2428,7 +2936,7 @@
 			)
 		)
 		(property "Value" "VIN"
-			(at 95.25 142.24 0)
+			(at 93.98 132.08 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2438,7 +2946,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 95.25 137.16 0)
+			(at 93.98 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2449,7 +2957,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 95.25 137.16 0)
+			(at 93.98 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2460,7 +2968,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VCC\""
-			(at 95.25 137.16 0)
+			(at 93.98 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2484,7 +2992,7 @@
 	)
 	(symbol
 		(lib_id "Project_Parts:ESP32_DevKit_v1")
-		(at 140.97 105.41 0)
+		(at 139.7 95.25 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2494,7 +3002,7 @@
 		(dnp no)
 		(uuid "0ecfcf91-b60f-404b-b72c-cdcab2905546")
 		(property "Reference" "U1"
-			(at 143.51 105.41 0)
+			(at 142.24 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2505,7 +3013,7 @@
 			)
 		)
 		(property "Value" "ESP32_DevKit_v1"
-			(at 140.97 83.312 0)
+			(at 139.7 73.152 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2515,7 +3023,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 140.97 100.33 0)
+			(at 139.7 90.17 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2526,7 +3034,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.circuitstate.com/pinouts/doit-esp32-devkit-v1-wifi-development-board-pinout-diagram-and-reference"
-			(at 140.97 97.79 0)
+			(at 139.7 87.63 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2537,7 +3045,7 @@
 			)
 		)
 		(property "Description" "DOIT ESP32 DevKit v1 30-pin development board (2x15 header, 25 GPIO)"
-			(at 140.97 95.25 0)
+			(at 139.7 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2647,8 +3155,91 @@
 		)
 	)
 	(symbol
+		(lib_id "Project_Parts:LDR_Module")
+		(at 200.66 129.54 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "257e5e50-2796-495b-b2c6-352030d936ed")
+		(property "Reference" "LDR1"
+			(at 193.04 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "LDR_Module"
+			(at 195.58 122.174 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector:PinHeader_1x03_P2.54mm_Vertical"
+			(at 200.66 124.46 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 200.66 121.92 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "LDR / photoresistor light sensor module (3-pin VCC/GND/OUT voltage divider, GL5516 style)"
+			(at 200.66 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f9ee706c-b6c3-4169-b7df-8713f60fd147")
+		)
+		(pin "2"
+			(uuid "ada88ab6-5937-4648-ab3f-3cff4aab31ed")
+		)
+		(pin "3"
+			(uuid "d2cfd53d-a270-4f9a-b688-7d93ee045158")
+		)
+		(instances
+			(project "esp32_project"
+				(path "/2b47d57e-636d-45f4-9f7c-1c23f2592c0c"
+					(reference "LDR1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Sensor_Humidity:SHT31-DIS")
-		(at 182.88 91.44 0)
+		(at 181.61 81.28 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2658,7 +3249,7 @@
 		(dnp no)
 		(uuid "2664c204-2622-49b3-bd35-c78285e0d2e2")
 		(property "Reference" "U2"
-			(at 176.53 97.79 0)
+			(at 175.26 87.63 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2668,7 +3259,7 @@
 			)
 		)
 		(property "Value" "SHT31-D"
-			(at 188.468 84.582 0)
+			(at 187.198 74.422 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2678,7 +3269,7 @@
 			)
 		)
 		(property "Footprint" "Sensor_Humidity:Sensirion_DFN-8-1EP_2.5x2.5mm_P0.5mm_EP1.1x1.7mm"
-			(at 182.88 92.71 0)
+			(at 181.61 82.55 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2689,7 +3280,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/2_Humidity_Sensors/Datasheets/Sensirion_Humidity_Sensors_SHT3x_Datasheet_digital.pdf"
-			(at 182.88 92.71 0)
+			(at 181.61 82.55 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2700,7 +3291,7 @@
 			)
 		)
 		(property "Description" "I²C humidity and temperature sensor, ±2%RH, ±0.2°C, DFN-8"
-			(at 182.88 91.44 0)
+			(at 181.61 81.28 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2748,7 +3339,7 @@
 	)
 	(symbol
 		(lib_id "power:+12V")
-		(at 95.25 76.2 0)
+		(at 93.98 66.04 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2759,7 +3350,7 @@
 		(fields_autoplaced yes)
 		(uuid "4a2dfc65-dfc0-4431-b3e4-e2c87b6af325")
 		(property "Reference" "#PWR02"
-			(at 95.25 80.01 0)
+			(at 93.98 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2770,7 +3361,7 @@
 			)
 		)
 		(property "Value" "+12V"
-			(at 95.25 71.12 0)
+			(at 93.98 60.96 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2780,7 +3371,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 95.25 76.2 0)
+			(at 93.98 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2791,7 +3382,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 95.25 76.2 0)
+			(at 93.98 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2802,7 +3393,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+12V\""
-			(at 95.25 76.2 0)
+			(at 93.98 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2826,7 +3417,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 88.9 137.16 0)
+		(at 87.63 127 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2837,7 +3428,7 @@
 		(fields_autoplaced yes)
 		(uuid "6c1da9cb-abc0-48ee-bc42-a36860d9b319")
 		(property "Reference" "#PWR03"
-			(at 88.9 143.51 0)
+			(at 87.63 133.35 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2848,7 +3439,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 88.9 142.24 0)
+			(at 87.63 132.08 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2858,7 +3449,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 88.9 137.16 0)
+			(at 87.63 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2869,7 +3460,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 88.9 137.16 0)
+			(at 87.63 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2880,7 +3471,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 88.9 137.16 0)
+			(at 87.63 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2904,7 +3495,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 121.92 138.43 0)
+		(at 120.65 128.27 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2915,7 +3506,7 @@
 		(fields_autoplaced yes)
 		(uuid "845439b5-4f48-4b6b-aac4-3b633ba2a6a4")
 		(property "Reference" "#PWR06"
-			(at 121.92 144.78 0)
+			(at 120.65 134.62 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2926,7 +3517,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 121.92 143.51 0)
+			(at 120.65 133.35 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2936,7 +3527,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 121.92 138.43 0)
+			(at 120.65 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2947,7 +3538,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 121.92 138.43 0)
+			(at 120.65 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2958,7 +3549,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 121.92 138.43 0)
+			(at 120.65 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2982,7 +3573,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 125.73 138.43 180)
+		(at 124.46 128.27 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2993,7 +3584,7 @@
 		(fields_autoplaced yes)
 		(uuid "936bb3f3-0c75-486b-bbc9-b6884e98849b")
 		(property "Reference" "#PWR05"
-			(at 125.73 134.62 0)
+			(at 124.46 124.46 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3004,7 +3595,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 125.73 143.51 0)
+			(at 124.46 133.35 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3014,7 +3605,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 125.73 138.43 0)
+			(at 124.46 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3025,7 +3616,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 125.73 138.43 0)
+			(at 124.46 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3036,7 +3627,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 125.73 138.43 0)
+			(at 124.46 128.27 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3059,8 +3650,8 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 88.9 76.2 180)
+		(lib_id "Project_Parts:KY008_Laser")
+		(at 173.99 129.54 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3068,11 +3659,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c11d9b7e-0348-4ec9-a386-c10034531a15")
-		(property "Reference" "#PWR01"
-			(at 88.9 69.85 0)
-			(hide yes)
+		(uuid "99a1f42c-6b21-47b9-9e6a-2bc26d990d23")
+		(property "Reference" "LAS1"
+			(at 181.356 129.54 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3081,8 +3670,8 @@
 				)
 			)
 		)
-		(property "Value" "GND"
-			(at 88.9 71.12 0)
+		(property "Value" "KY-008"
+			(at 179.324 122.428 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3091,8 +3680,8 @@
 				)
 			)
 		)
-		(property "Footprint" ""
-			(at 88.9 76.2 0)
+		(property "Footprint" "Connector:PinHeader_1x03_P2.54mm_Vertical"
+			(at 173.99 116.586 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3103,7 +3692,91 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 88.9 76.2 0)
+			(at 173.99 121.92 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "KY-008 650nm laser transmitter module (5V, S/GND/VCC 3-pin header, 18.5x15mm PCB)"
+			(at 173.99 111.506 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c9b88727-bfba-4442-aeee-75a32eb83307")
+		)
+		(pin "2"
+			(uuid "fb1c30fe-8ce0-4897-9a48-c5f01aaaf6a3")
+		)
+		(pin "3"
+			(uuid "454009ec-4331-469c-903c-53b89079a529")
+		)
+		(instances
+			(project "esp32_project"
+				(path "/2b47d57e-636d-45f4-9f7c-1c23f2592c0c"
+					(reference "LAS1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 87.63 66.04 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c11d9b7e-0348-4ec9-a386-c10034531a15")
+		(property "Reference" "#PWR01"
+			(at 87.63 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 87.63 60.96 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 87.63 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 87.63 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3114,7 +3787,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 88.9 76.2 0)
+			(at 87.63 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3138,7 +3811,7 @@
 	)
 	(symbol
 		(lib_id "Project_Parts:Anemometer")
-		(at 177.8 113.03 0)
+		(at 176.53 102.87 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3148,7 +3821,7 @@
 		(dnp no)
 		(uuid "f0697731-a266-4110-979d-6d62cd97f2c5")
 		(property "Reference" "AN1"
-			(at 183.134 113.03 0)
+			(at 181.864 102.87 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3158,7 +3831,7 @@
 			)
 		)
 		(property "Value" "Anemometer"
-			(at 180.34 105.156 0)
+			(at 179.07 94.996 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3168,7 +3841,7 @@
 			)
 		)
 		(property "Footprint" "Connector:PinHeader_1x04_P2.54mm_Vertical"
-			(at 177.8 107.95 0)
+			(at 176.53 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3179,7 +3852,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 177.8 105.41 0)
+			(at 176.53 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3190,7 +3863,7 @@
 			)
 		)
 		(property "Description" "Cup anemometer / wind sensor (Davis 7911 style: speed reed, direction pot, GND, VCC)"
-			(at 177.8 102.87 0)
+			(at 176.53 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
