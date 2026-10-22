@@ -10,6 +10,7 @@
             "includePath": [
                 "x:/corona/include",
                 "x:/corona/src",
+                "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "x:/corona/.pio/libdeps/esp32dev/Blynk/src",
                 "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "x:/corona/.pio/libdeps/esp32dev/BlynkNcpDriver/src",
@@ -240,7 +241,6 @@
                 "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                 "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                 "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 ""
             ],
             "browse": {
@@ -248,6 +248,7 @@
                 "path": [
                     "x:/corona/include",
                     "x:/corona/src",
+                    "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "x:/corona/.pio/libdeps/esp32dev/Blynk/src",
                     "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "x:/corona/.pio/libdeps/esp32dev/BlynkNcpDriver/src",
@@ -478,7 +479,6 @@
                     "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                     "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                     "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                    "C:/Users/daniswastaken/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     ""
                 ]
             },
