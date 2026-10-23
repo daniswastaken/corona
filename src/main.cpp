@@ -32,8 +32,20 @@ char pass[] = "567890123";
 
 #define FOG_THRESHOLD 2000 // LDR reading below this => fog blocks laser
 #define SEND_INTERVAL 2000UL
+#define WIND_MIN_MS 1.0f   // relay condition: wind at least 1 m/s
+#define HUM_OFFSET 0.0f    // humidity calibration, add to raw reading (%RH)
+// sensor reads ~80% when real peak is 90-100% => scale error, not offset
+#define HUM_SCALE 1.2f     // raw * SCALE + OFFSET; 80 -> 96
+// shortcut: scale tuned from one observation (peak), no second reference point;
+// upgrade path = measure one low RH point too, solve scale+offset from both
+// shortcut: 20s window = 10 ticks of SEND_INTERVAL, so real window 20s +/- 2s;
+// upgrade path = millis() timestamp diff if exact timing matters
+#define CONFIRM_TICKS 10
 
 BlynkTimer timer;
+
+bool relayOn = false;
+uint8_t condTicks = 0; // consecutive ticks condition held in current direction
 
 volatile uint32_t windPulses = 0;
 volatile uint32_t lastWindPulse = 0;
@@ -60,6 +72,9 @@ bool readSHT31(float &t, float &h) {
   uint16_t rawH = ((uint16_t)d[3] << 8) | d[4];
   t = -45.0f + 175.0f * (float)rawT / 65535.0f;
   h = 100.0f * (float)rawH / 65535.0f;
+  h = h * HUM_SCALE + HUM_OFFSET;
+  if (h < 0.0f) h = 0.0f;   // keep Blynk gauge in range
+  if (h > 100.0f) h = 100.0f;
   return true;
 }
 
@@ -73,32 +88,32 @@ void sendSensorData() {
   // Empirical calibration: ~4 m/s at ~17.6 pulses/s
   float ms = ((float)count / ((float)SEND_INTERVAL / 1000.0f)) * 0.227f;
 
-  // Anemometer has only a pulse (speed) output; no direction vane.
-  float windDir = 0.0f;
-
   int light = analogRead(LDR_PIN);
   bool fog = light < FOG_THRESHOLD;
+  bool valid = fog && ms >= WIND_MIN_MS; // relay condition
 
   if (ok) {
     Blynk.virtualWrite(V2, temp);
     Blynk.virtualWrite(V3, hum);
   }
   Blynk.virtualWrite(V4, ms);
-  Blynk.virtualWrite(V5, 0);
+  Blynk.virtualWrite(V5, 0); // no direction vane on anemometer
   Blynk.virtualWrite(V6, light);
-  Blynk.virtualWrite(V7, fog ? 1 : 0);
+  Blynk.virtualWrite(V7, fog);
 
-  // Auto relay based on fog (and reflect on dashboard)
-  if (fog) {
-    digitalWrite(RELAY_PIN, HIGH);
-    digitalWrite(LED_PIN, HIGH);
-    Blynk.virtualWrite(V0, 1);
-    Blynk.virtualWrite(V1, 1);
-  } else {
-    digitalWrite(RELAY_PIN, LOW);
-    digitalWrite(LED_PIN, LOW);
-    Blynk.virtualWrite(V0, 0);
-    Blynk.virtualWrite(V1, 0);
+  // Symmetric debounce: relay on after 20s valid, off after 20s invalid.
+  // One dirty/clean tick resets the count.
+  if (valid == relayOn) {
+    condTicks = 0; // holds current state, nothing to confirm
+  } else if (++condTicks >= CONFIRM_TICKS) {
+    relayOn = valid;
+    condTicks = 0;
+    digitalWrite(RELAY_PIN, relayOn);
+    digitalWrite(LED_PIN, relayOn);
+    Blynk.virtualWrite(V0, relayOn);
+    Blynk.virtualWrite(V1, relayOn);
+    Serial.printf("RELAY %s (fog=%d wind=%.2f light=%d)\n",
+                  relayOn ? "CLOSED" : "OPEN", fog, ms, light);
   }
 
   Serial.printf("T=%.2f H=%.2f wind=%.2f m/s light=%d fog=%d pulses=%lu windPin=%d\n",
@@ -107,12 +122,13 @@ void sendSensorData() {
 
 // Control relay from Blynk app, Virtual Pin V0.
 BLYNK_WRITE(V0) {
-  int on = param.asInt() ? 1 : 0;
-  digitalWrite(RELAY_PIN, on ? HIGH : LOW); // Active-HIGH module
-  digitalWrite(LED_PIN, on ? HIGH : LOW);
+  bool on = param.asInt();
+  relayOn = on; // keep debounce state coherent with manual override
+  condTicks = 0;
+  digitalWrite(RELAY_PIN, on); // Active-HIGH module
+  digitalWrite(LED_PIN, on);
   Blynk.virtualWrite(V1, on);
-  Serial.print("RELAY ");
-  Serial.println(on ? "CLOSED" : "OPEN");
+  Serial.printf("RELAY %s\n", on ? "CLOSED" : "OPEN");
 }
 
 BLYNK_CONNECTED() {
